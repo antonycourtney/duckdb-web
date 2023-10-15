@@ -30,6 +30,8 @@ The primary manner of interfacing with data chunks is by obtaining the internal 
 <span class="kt">void</span> <span class="nf"><a href="#duckdb_vector_assign_string_element_len">duckdb_vector_assign_string_element_len</a></span>(<span class="kt">duckdb_vector</span> <span class="k">vector</span>, <span class="kt">idx_t</span> <span class="k">index</span>, <span class="kt">const</span> <span class="kt">char</span> *<span class="k">str</span>, <span class="kt">idx_t</span> <span class="k">str_len</span>);
 <span class="kt">duckdb_vector</span> <span class="nf"><a href="#duckdb_list_vector_get_child">duckdb_list_vector_get_child</a></span>(<span class="kt">duckdb_vector</span> <span class="k">vector</span>);
 <span class="kt">idx_t</span> <span class="nf"><a href="#duckdb_list_vector_get_size">duckdb_list_vector_get_size</a></span>(<span class="kt">duckdb_vector</span> <span class="k">vector</span>);
+<span class="kt">duckdb_state</span> <span class="nf"><a href="#duckdb_list_vector_set_size">duckdb_list_vector_set_size</a></span>(<span class="kt">duckdb_vector</span> <span class="k">vector</span>, <span class="kt">idx_t</span> <span class="k">size</span>);
+<span class="kt">duckdb_state</span> <span class="nf"><a href="#duckdb_list_vector_reserve">duckdb_list_vector_reserve</a></span>(<span class="kt">duckdb_vector</span> <span class="k">vector</span>, <span class="kt">idx_t</span> <span class="k">required_capacity</span>);
 <span class="kt">duckdb_vector</span> <span class="nf"><a href="#duckdb_struct_vector_get_child">duckdb_struct_vector_get_child</a></span>(<span class="kt">duckdb_vector</span> <span class="k">vector</span>, <span class="kt">idx_t</span> <span class="k">index</span>);
 </code></pre></div></div>
 #### **Validity Mask Functions**
@@ -391,6 +393,56 @@ The size of the child list
 
 <br>
 
+### **duckdb_list_vector_set_size**
+---
+Sets the total size of the underlying child-vector of a list vector.
+
+#### **Syntax**
+---
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">duckdb_state</span> <span class="k">duckdb_list_vector_set_size</span>(<span class="k">
+</span>  <span class="kt">duckdb_vector</span> <span class="k">vector</span>,<span class="k">
+</span>  <span class="kt">idx_t</span> <span class="k">size
+</span>);
+</code></pre></div></div>
+#### **Parameters**
+---
+* `vector`
+
+The list vector.
+* `size`
+
+The size of the child list.
+* `returns`
+
+The duckdb state. Returns DuckDBError if the vector is nullptr.
+
+<br>
+
+### **duckdb_list_vector_reserve**
+---
+Sets the total capacity of the underlying child-vector of a list.
+
+#### **Syntax**
+---
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">duckdb_state</span> <span class="k">duckdb_list_vector_reserve</span>(<span class="k">
+</span>  <span class="kt">duckdb_vector</span> <span class="k">vector</span>,<span class="k">
+</span>  <span class="kt">idx_t</span> <span class="k">required_capacity
+</span>);
+</code></pre></div></div>
+#### **Parameters**
+---
+* `vector`
+
+The list vector.
+* `required_capacity`
+
+the total capacity to reserve.
+* `return`
+
+The duckdb state. Returns DuckDBError if the vector is nullptr.
+
+<br>
+
 ### **duckdb_struct_vector_get_child**
 ---
 Retrieves the child vector of a struct vector.
@@ -433,7 +485,7 @@ Returns whether or not a row is valid (i.e. not NULL) in the given validity mask
 ---
 * `validity`
 
-The validity mask, as obtained through `duckdb_data_chunk_get_validity`
+The validity mask, as obtained through `duckdb_vector_get_validity`
 * `row`
 
 The row index
@@ -447,7 +499,7 @@ true if the row is valid, false otherwise
 ---
 In a validity mask, sets a specific row to either valid or invalid.
 
-Note that `duckdb_data_chunk_ensure_validity_writable` should be called before calling `duckdb_data_chunk_get_validity`,
+Note that `duckdb_vector_ensure_validity_writable` should be called before calling `duckdb_vector_get_validity`,
 to ensure that there is a validity mask to write to.
 
 #### **Syntax**
@@ -462,7 +514,7 @@ to ensure that there is a validity mask to write to.
 ---
 * `validity`
 
-The validity mask, as obtained through `duckdb_data_chunk_get_validity`.
+The validity mask, as obtained through `duckdb_vector_get_validity`.
 * `row`
 
 The row index
